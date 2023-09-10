@@ -1,14 +1,14 @@
 <script >
-
+import {defineComponent, computed, ref} from 'vue'
       import { isEmpty } from 'lodash-es'
-      import { isFieldError } from '@/components/form/GDBFormItem.vue'
-      import type { PropType } from 'vue'
+      // import { isFieldError } from '@/components/form/GDBFormItem.vue'
+      //不確定 GDBFormItem.vue 是怎樣的功能，題目沒寫
 
       export default defineComponent({
         name: 'GDBInput',
         props: {
           modelValue: {
-            type: [String, Number] as PropType<string | number | null>,
+            type: [String, Number],
             default: null,
           },
           type: {
@@ -40,7 +40,7 @@
             default: false,
           },
           size: {
-            type: String as PropType<'small' | 'medium'>,
+            type: String,
             default: 'medium',
           },
           fullWidth: {
@@ -84,12 +84,12 @@
           const isShowPassword = ref(false)
           const isFocus = ref(false)
 
-          const isError = inject(isFieldError, readonly(computed(() => false)))
+          // const isError = inject(isFieldError, readonly(computed(() => false)))
 
           const state = computed(() => {
             return {
               inputType: props.type === 'password' ? (isShowPassword.value ? 'text' : 'password') : props.type,
-              isError: isError.value,
+              // isError: isError.value,
               isDisabled: props.disabled,
               hasPrefix: !isEmpty(props.prefix),
               hasSuffix: !isEmpty(props.suffix),
@@ -106,6 +106,7 @@
 
           const blurEvent = () => {
             const { max, min, hasDecimalPoint, type } = props
+            isFocus.value = false
 
             if (type !== 'number') return
             if (value.value === '') value.value = 0
@@ -113,7 +114,6 @@
             if (Number(value.value) < min) value.value = min
             if (Number(value.value) > max) value.value = max
 
-            isFocus.value = false
           }
 
           return {
@@ -136,7 +136,7 @@
         class="gdb-input"
         :class="{
           [`gdb-input--${size}`]: true,
-          'gdb-input--error': state.isError,
+          // 'gdb-input--error': state.isError,
           'gdb-input--password': state.inputType === 'password',
           'gdb-input--disabled': state.isDisabled,
           'gdb-input--full': fullWidth,
@@ -156,8 +156,12 @@
               @change="changeEvent"
             />
             <div v-if="type === 'password'" class="gdb-input__password" @click="isShowPassword = !isShowPassword">
-              <span v-if="isShowPassword" class="gdb-input__password-icon material-icons-round">visibility</span>
-              <span v-else class="gdb-input__password-icon material-icons-round">visibility_off</span>
+              <span v-if="isShowPassword" class="gdb-input__password-icon material-icons-round">
+                <font-awesome-icon icon="fa-solid fa-eye" />
+              </span>
+              <span v-else class="gdb-input__password-icon material-icons-round">
+                <font-awesome-icon icon="fa-solid fa-eye-slash" />
+              </span>
             </div>
           </div>
           <div v-if="state.hasSuffix" class="gdb-input__suffix">{{ suffix }}</div>
@@ -166,17 +170,6 @@
     
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+<style lang="scss" scoped>
+@import "@/assets/scss/all.scss";
 </style>
